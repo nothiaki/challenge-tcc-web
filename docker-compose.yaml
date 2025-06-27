@@ -1,0 +1,37 @@
+services:
+
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - 3000:3000
+    restart: always
+    depends_on:
+      - postgres
+    volumes:
+      - ./backend:/backend
+    networks:
+      - dev
+
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: tasks-db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - dev
+
+networks:
+
+  dev:
+    driver: bridge
+
+volumes:
+
+  postgres_data:
