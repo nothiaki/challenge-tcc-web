@@ -1,6 +1,6 @@
 # backend
 
-node_modules
-.env
-/generated/prisma
-dist
+backend/node_modules
+backend/.env
+backend/generated
+backend/dist
