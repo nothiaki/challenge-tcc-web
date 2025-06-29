@@ -1,4 +1,13 @@
-import { Controller, Get, Post, ParseUUIDPipe, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  ParseUUIDPipe,
+  Body,
+  Param,
+  Delete,
+  HttpCode
+} from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 
@@ -7,6 +16,7 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post()
+  @HttpCode(201)
   create(@Body() createTaskDto: CreateTaskDto) {
     return this.tasksService.create(createTaskDto);
   }
@@ -17,7 +27,8 @@ export class TasksController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.tasksService.remove(id);
+    this.tasksService.remove(id);
   }
 }
