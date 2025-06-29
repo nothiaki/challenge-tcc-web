@@ -4,7 +4,7 @@ CREATE TABLE "Task" (
     "description" VARCHAR(255) NOT NULL,
     "done" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "isActive" BOOLEAN NOT NULL DEFAULT false,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT "Task_pkey" PRIMARY KEY ("id")
 );

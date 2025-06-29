@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -13,5 +12,5 @@ model Task {
   description String   @db.VarChar(255)
   done        Boolean  @default(false)
   createdAt   DateTime @default(now()) @db.Timestamp(6)
-  isActive    Boolean  @default(false)
+  isActive    Boolean  @default(true)
 }
