@@ -1,35 +1,55 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UpdateDoneTaskDto } from './dto/update-done-tasks.dto';
 
 @Injectable()
 export class TasksService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  create(createTaskDto: CreateTaskDto) {
-    return this.prismaService.task.create({
+  async create(createTaskDto: CreateTaskDto) {
+    return await this.prismaService.task.create({
       data: {
         description: createTaskDto.description,
       }
     });
   }
 
-  findAll() {
-    return this.prismaService.task.findMany({
+  async findAll() {
+    return await this.prismaService.task.findMany({
       where: {
         isActive: true
       }
     });
   }
 
-  remove(id: string) {
-    return this.prismaService.task.update({
-      where: {
-        id: id
-      },
-      data: {
-        isActive: false
-      }
-    });
+  async remove(id: string) {
+    try {
+      return await this.prismaService.task.update({
+        where: {
+          id: id
+        },
+        data: {
+          isActive: false
+        }
+      });
+    } catch (err) {
+      throw new NotFoundException("Task not found");
+    }
+  }
+
+  async updateDoneTask(id: string, updateDoneTaskDto: UpdateDoneTaskDto) {
+    try {
+      return await this.prismaService.task.update({
+        where: {
+          id: id
+        },
+        data: {
+          done: updateDoneTaskDto.done
+        }
+      });
+    } catch (err) {
+      throw new NotFoundException("Task not found");
+    }
   }
 }
