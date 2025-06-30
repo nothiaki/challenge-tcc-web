@@ -1,0 +1,67 @@
+{
+  "info": {
+    "name": "http-requests-collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "create a task",
+      "event": [],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "http://localhost:3000/tasks",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"description\": \"walk\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "find all tasks",
+      "event": [],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "http://localhost:3000/tasks"
+      }
+    },
+    {
+      "name": "remove a task",
+      "event": [],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": "http://localhost:3000/tasks/:id"
+      }
+    },
+    {
+      "name": "bruno",
+      "event": []
+    },
+    {
+      "name": "mark done-undone task",
+      "event": [],
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "url": "http://localhost:3000/tasks/:id",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"done\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "variable": []
+}
