@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import axios from 'axios'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import {
@@ -39,7 +39,7 @@ type FormSchema = z.infer<typeof newTaskFormSchema>
 
 export function Home() {
 
-  const apiUrl: string = "http://localhost:3000/tasks";
+  const endpoint: string = "http://localhost:3000/tasks";
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(newTaskFormSchema),
@@ -54,7 +54,7 @@ export function Home() {
   useEffect(() => {
     async function fetchTasks() {
       try {
-        const response = await axios.get<Task[]>(apiUrl);
+        const response = await axios.get<Task[]>(endpoint);
         setTasks(response.data)
       } catch (err) {
         alert("Error while taking the tasks please reload the page");
@@ -67,7 +67,9 @@ export function Home() {
 
   const newTaskFormSubmit = async (newTaskData: newTaskData) => {
     try {
-      const response = await axios.post<Task>(apiUrl, {
+      setIsDialogOpen(false);
+
+      const response = await axios.post<Task>(endpoint, {
         description: newTaskData.description
       });
 
@@ -76,17 +78,43 @@ export function Home() {
       setTasks(tasksBefore => [...tasksBefore, createdTask]);
 
       form.reset();
-      setIsDialogOpen(false);
 
     } catch (err) {
-      alert("Error while creating the task (" + newTaskData.description + "). Try again.");
+      alert(`Error while creating the task (${newTaskData.description}). Try again.`);
+    }
+  };
+
+  const removeTask = async (id: string) => {
+    try {
+      await axios.delete(`${endpoint}/${id}`);
+
+      setTasks(prevTasks => prevTasks.filter(task => task.id !== id));
+
+    } catch (err) {
+      alert("Error while removing the task. Try again.");
+    }
+
+  }
+
+  const toggleTaskDone = async (id: string, done: boolean) => {
+    try {
+      await axios.patch(`${endpoint}/${id}`, { done });
+
+      setTasks(prevTasks =>
+        prevTasks.map(task =>
+          task.id === id ? { ...task, done: done } : task
+        )
+      );
+    } catch (err) {
+      alert("Error while updating the task status. Please try again.");
     }
   };
 
   return (
     <>
-      <header className="p-4 flex justify-center">
-        <h2 className="font-bold text-4xl">Check List</h2>
+      <header className="p-4 flex justify-center items-end">
+        <h2 className="font-bold text-4xl">check list</h2>
+        <X color="#e7000b" className="size-6 p-1"/>
       </header>
       <div className="flex justify-center">
         <main className="h-fit w-100 min-h-screen p-10 flex-col justify-start">
@@ -94,19 +122,28 @@ export function Home() {
             {
               tasks.map((task) => {
                 return (
-                  <li key={task.id} className="flex items-center gap-2">
-                    <Checkbox id={task.id} checked={task.done} />
-                    <Label htmlFor={task.id} className="text-xl">{task.description}</Label>
+                  <li key={task.id} className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        id={task.id}
+                        checked={task.done}
+                        onCheckedChange={(checked) => {
+                          toggleTaskDone(task.id, checked as boolean);
+                        }}
+                      />
+                      <Label htmlFor={task.id} className="text-xl">{task.description}</Label>
+                    </div>
+
+                    <button onClick={() => removeTask(task.id)}>
+                      <X color="#e7000b" className="size-4 hover:cursor-pointer"/>
+                    </button>
                   </li>
                 )
               })
             }
           </ul>
         </main>
-        <div className="p-4 fixed bottom-0 right-0 flex flex-col items-end gap-2">
-          <Button variant="outline" size="icon" className="size-8">
-            <Trash2 />
-          </Button>
+        <div className="p-4 fixed bottom-0 right-0">
 
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
