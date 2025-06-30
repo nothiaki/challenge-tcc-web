@@ -13,6 +13,17 @@ services:
     networks:
       - dev
 
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - 5173:5173
+    restart: always
+    depends_on:
+      - backend
+    networks:
+      - dev
+
   postgres:
     image: postgres
     ports:
